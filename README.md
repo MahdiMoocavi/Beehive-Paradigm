@@ -1,53 +1,58 @@
 # Post-Decision Evidence and Confidence Experiment
 
-A Python/PsychoPy implementation of a perceptual decision-making experiment designed to investigate how post-decisional evidence influences confidence and subsequent choice behaviour.
+A PsychoPy implementation of a perceptual decision-making experiment investigating how evidence presented **after an initial choice** affects confidence and subsequent choice behaviour.
 
-## Research objective
+This experiment was developed as part of a broader research project on perceptual decision-making. Its trial-level output is analysed in the companion [Sequential Decision Models](https://github.com/MahdiMoocavi/Sequential-Generalized-Linear-Model) repository.
 
-The experiment manipulates evidence presented after an initial left/right decision. Additional dots provide evidence designed to strengthen or weaken the participant's initial choice. This manipulation is used to study confidence judgments and sequential effects in decision-making.
+## Research question
 
-## Experimental design
+Does evidence presented after an initial left/right decision change participants' confidence in that decision, and how does this relate to sequential choice behaviour?
+
+## Experimental procedure
+
+```mermaid
+flowchart TD
+    A[Trial begins] --> B[Present dot stimulus]
+    B --> C[Initial left/right decision]
+    C --> D[Present post-decisional evidence]
+    D --> E[Confidence judgment, when scheduled]
+    E --> F[Save trial-level measures]
+```
 
 The default configuration includes:
 
-- One practice block with 10 trials.
-- Seven main blocks with 64 trials each.
-- Four difficulty levels, two target sides, and two post-decisional evidence conditions (stronger/weaker).
+- 10 practice trials and 7 main blocks of 64 trials.
+- Four difficulty levels, two target sides, and stronger/weaker post-decisional evidence conditions.
 - Five additional dots presented after the initial response.
 - A six-category confidence judgment in the final six main blocks.
-- Counterbalanced ordering of confidence labels based on participant ID parity.
+- Confidence-label ordering counterbalanced by participant-ID parity.
 
-The task samples dot locations from bivariate normal distributions and records stimulus coordinates, decision, response time, accuracy, confidence rating, and post-decisional evidence condition.
+Dot locations are sampled from bivariate normal distributions. The experiment records stimulus coordinates, decisions, response times, accuracy, confidence ratings, and post-decisional evidence conditions.
 
-## Requirements
+## Implementation
 
-Python, PsychoPy, NumPy, and pywin32 (for the Windows screen-resolution call).
+- **Language:** Python
+- **Experiment framework:** PsychoPy
+- **Additional dependencies:** NumPy, pywin32
+- **Main script:** `beehive_experiment.py`
 
 ```bash
 pip install psychopy numpy pywin32
+python beehive_experiment.py
 ```
 
-## Required instruction assets
+## Required study assets and environment
 
-The script expects an Instructions directory containing Slide1.JPG through Slide15.JPG. These study-specific instruction images are not included and must be supplied locally before running the task. The script checks for missing slides and reports the missing path.
+The script expects an `Instructions` directory containing `Slide1.JPG` through `Slide15.JPG`. These study-specific images are not distributed in this repository.
 
-## Run
+The implementation uses Windows-specific screen-resolution access and checks for an approximately 60 Hz display refresh rate. Review these assumptions before running the experiment on another operating system or monitor.
 
-1. Place the 15 instruction images in the expected Instructions directory.
-2. Run the script from the project directory:
+## Data and reproducibility
 
-```bash
-python BeehivesParadigm_2023_01.py
-```
+Trial-level data are saved through PsychoPy's `ExperimentHandler`. Timed-out trials are retained, with unavailable evidence summaries recorded as missing rather than silently omitted.
 
-3. Enter a participant ID and the requested demographic information in the PsychoPy dialog.
+Participant data and instruction assets are not included. A full reproduction therefore requires the original study materials and an appropriate experimental setup.
 
-The task creates a Data directory when needed and uses PsychoPy's ExperimentHandler to save participant-level trial data.
+## Related project
 
-## Recorded variables
-
-Trial records include block and trial identifiers, practice/main status, difficulty, target side, response, accuracy, response time, confidence judgment and response time, pre- and post-decisional dot coordinates and means, and the evidence-shift condition. Timed-out trials are retained with missing evidence summaries instead of causing undefined-variable errors.
-
-## Environment and reproducibility notes
-
-The task uses Windows-specific screen-resolution access and checks for an approximately 60 Hz display refresh rate. The measured frame time is recorded with each trial. These assumptions should be reviewed before running the task on another operating system or monitor configuration. Participant data and instruction assets are not distributed here.
+The companion [Sequential Decision Models](https://github.com/MahdiMoocavi/Sequential-Generalized-Linear-Model) repository analyses trial-level outputs from this experiment using mixed-effects models.
