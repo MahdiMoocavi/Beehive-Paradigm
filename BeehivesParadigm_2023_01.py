@@ -46,7 +46,7 @@ else:
     info        = {'sub': 0,'gender':['V','M','X'],'age': 0,'handedness':['R','L']}
     myDlg       = gui.DlgFromDict(dictionary = info, title = "Beehives task",show=True)
     sub = info['sub'];age = info['age'];gender = info['gender'];handedness = info['handedness'];
-    file_name   = "Data\BeehivesTask_sub%d" %(sub) + ".csv" 
+    file_name   = os.path.join("Data", "BeehivesTask_sub%d.csv" % sub) 
     if os.path.isfile(file_name):
         print('This subject number already exists!')
         core.quit()
@@ -115,7 +115,7 @@ refresh_rate    = visual.getMsPerFrame(myWin=window, nFrames = 60, showVisual=Fa
 
 
 ## Timing stimuli is based on 60 Hz --> 60 frames per second --> 16.67 ms per frame 
-if round(refresh_rate[0],0) != 17: # check refresh rate is ~ 17 Hz
+if round(refresh_rate[0],0) != 17: # ~17 ms per frame corresponds to approximately 60 Hz
     print("Refresh rate not okay!")
     core.quit()
 
@@ -162,7 +162,9 @@ main_trial_list = []
 
 for block in range(nb_main_blocks): # shuffle order and add to list to obtain sequence over all blocks
     random.shuffle(trial_list)
-    main_trial_list.append(trial_list)
+    # Keep an independent randomized order for each block. Appending the same
+    # list object repeatedly would make all blocks share the final shuffle.
+    main_trial_list.append(trial_list.copy())
 
 
 
@@ -187,17 +189,20 @@ testing_trial_list = list(divide_chunks(testing_trials, nb_training_trials))
 
         
 # TrialHandler: make a data file
-file_name = "Data\DotsTask_sub%d" %(sub)
+file_name = os.path.join("Data", "DotsTask_sub%d" % sub)
 info           = {"sub": sub,"age": age, "gender": gender, "handedness": handedness}
 thisExp = data.ExperimentHandler(dataFileName = file_name,extraInfo=info)
 
 
 # Instruction images
-imagepath = my_directory + '\Instructions\Slide'
 image = []
 for number_image in range(15):
-    image_id = imagepath + str(number_image+1) + '.JPG' #import image 
-    image.append(visual.ImageStim(window, image_id)) #convert as 'Image Stimulus'
+    image_id = os.path.join(
+        my_directory, "Instructions", "Slide%d.JPG" % (number_image + 1)
+    )
+    if not os.path.isfile(image_id):
+        raise FileNotFoundError("Required instruction image not found: %s" % image_id)
+    image.append(visual.ImageStim(window, image_id))
 
 
 # Initialization variables for feedback on performance in between blocks
@@ -286,6 +291,10 @@ for block in range(nb_total_blocks):
         
         location_dots = [] # to save coordinates of dots
         location_add_dots = [] # to save coordinates of post-decisional dots
+        # Defaults ensure timed-out trials can still be recorded safely.
+        mean_dots = np.nan
+        mean_add_dots = np.nan
+        shft = np.nan
 
         
         # Configuration generative distribution for bee positions
@@ -479,6 +488,7 @@ for block in range(nb_total_blocks):
         thisExp.addData("post_dots_location_mean", mean_add_dots)
         thisExp.addData("shift_post_dots", shift_post_dots)
         thisExp.addData("shift", shift_value)
+        thisExp.addData("refresh_rate_ms", round(refresh_rate[0], 2))
 
         
 
