@@ -189,7 +189,7 @@ testing_trial_list = list(divide_chunks(testing_trials, nb_training_trials))
 
         
 # TrialHandler: make a data file
-file_name = "Data\DotsTask_sub%d" %(sub)
+file_name = os.path.join("Data", "DotsTask_sub%d" % sub)
 info           = {"sub": sub,"age": age, "gender": gender, "handedness": handedness}
 thisExp = data.ExperimentHandler(dataFileName = file_name,extraInfo=info)
 
