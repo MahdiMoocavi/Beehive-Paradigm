@@ -1,4 +1,4 @@
-# Beehive Paradigm: Perceptual Decision-Making Experiment
+# Post-Decision Evidence and Confidence Experiment
 
 A Python/PsychoPy implementation of a perceptual decision-making experiment designed to investigate how post-decisional evidence influences confidence and subsequent choice behaviour.
 
